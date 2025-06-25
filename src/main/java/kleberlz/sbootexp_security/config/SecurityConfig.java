@@ -12,13 +12,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity // Habilita pra fazer configs do Spring Security
-public class SecurityConfig {
+public class SecurityConfig { //Aqui é toda a lógica principal da configuração de segurança;
 	
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain securityFilterChain(
+			HttpSecurity http, SenhaMasterAuthenticationaProvider senhaMasterAuthenticationProvider,
+			CustomFilter customFilter) throws Exception {
 		return http
 				.authorizeHttpRequests(customizer -> {
 					customizer.requestMatchers("/public").permitAll();
@@ -26,7 +29,9 @@ public class SecurityConfig {
 				})
 				
 				.httpBasic(Customizer.withDefaults()) //habilita novamente o httpbasic(basic auth) padrão
-				.formLogin(Customizer.withDefaults()) //habilita novamente o formLogin padrão
+				.formLogin(Customizer.withDefaults())//habilita novamente o formLogin padrão
+				.authenticationProvider(senhaMasterAuthenticationProvider)
+				.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 	}
 	
