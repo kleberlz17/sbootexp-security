@@ -32,7 +32,7 @@ public class CustomFilter extends OncePerRequestFilter {
 		if(secretHeader != null) {
 			if(secretHeader.equals("secr3t")) {
 				Authentication authentication = new UsernamePasswordAuthenticationToken(
-						"Muito secreto", null, List.of(new SimpleGrantedAuthority("ADMIN")));
+						"Muito secreto", null, List.of(new SimpleGrantedAuthority("USER")));
 				
 				SecurityContext securityContext = SecurityContextHolder.getContext();
 				securityContext.setAuthentication(authentication);
@@ -40,8 +40,7 @@ public class CustomFilter extends OncePerRequestFilter {
 		}
 		
 		filterChain.doFilter(request, response); 
-		//Se não por doFilter vai quebrar a cadeia de filtros e qualquer um vai conseguir acessar, porém
-		// sem respostas.
+		//Se não por doFilter vai quebrar a cadeia de filtros e qualquer um vai conseguir acessar, porém sem respostas.
 		
 
 		

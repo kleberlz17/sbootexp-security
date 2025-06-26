@@ -3,8 +3,11 @@ package kleberlz.sbootexp_security.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,13 +19,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity // Habilita pra fazer configs do Spring Security
+@EnableMethodSecurity(securedEnabled = true)// configurar permissoes nos controllers.(FooController)
 public class SecurityConfig { //Aqui é toda a lógica principal da configuração de segurança;
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(
-			HttpSecurity http, SenhaMasterAuthenticationaProvider senhaMasterAuthenticationProvider,
+			HttpSecurity http, 
+			SenhaMasterAuthenticationaProvider senhaMasterAuthenticationProvider,
 			CustomFilter customFilter) throws Exception {
 		return http
+				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(customizer -> {
 					customizer.requestMatchers("/public").permitAll();
 					customizer.anyRequest().authenticated();
@@ -55,6 +61,11 @@ public class SecurityConfig { //Aqui é toda a lógica principal da configuraç�
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+	
+	@Bean //Aqui tira a obrigatoriedade do prefixo ROLE_
+	public GrantedAuthorityDefaults grantedAuthorityDefaults() {
+		return new GrantedAuthorityDefaults("");
 	}
 
 }
