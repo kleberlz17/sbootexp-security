@@ -21,11 +21,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity // Habilita pra fazer configs do Spring Security
 @EnableMethodSecurity(securedEnabled = true)// configurar permissoes nos controllers.(FooController)
 public class SecurityConfig { //Aqui é toda a lógica principal da configuração de segurança;
-	
+	// AQUI JUNTA TODA A LOGICA FEITA DE SECURITY!!!
 	@Bean
 	public SecurityFilterChain securityFilterChain(
 			HttpSecurity http, 
 			SenhaMasterAuthenticationaProvider senhaMasterAuthenticationProvider,
+			CustomAuthenticationProvider customAuthenticationProvider,
 			CustomFilter customFilter) throws Exception {
 		return http
 				.csrf(AbstractHttpConfigurer::disable)
@@ -37,6 +38,7 @@ public class SecurityConfig { //Aqui é toda a lógica principal da configuraç�
 				.httpBasic(Customizer.withDefaults()) //habilita novamente o httpbasic(basic auth) padrão
 				.formLogin(Customizer.withDefaults())//habilita novamente o formLogin padrão
 				.authenticationProvider(senhaMasterAuthenticationProvider)
+				.authenticationProvider(customAuthenticationProvider)
 				.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 	}

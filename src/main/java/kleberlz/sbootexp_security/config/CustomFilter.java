@@ -3,9 +3,7 @@ package kleberlz.sbootexp_security.config;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -15,6 +13,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kleberlz.sbootexp_security.security.CustomAuthentication;
+import kleberlz.sbootexp_security.security.IdentificacaoUsuario;
 
 @Component
 public class CustomFilter extends OncePerRequestFilter {
@@ -31,8 +31,13 @@ public class CustomFilter extends OncePerRequestFilter {
 		
 		if(secretHeader != null) {
 			if(secretHeader.equals("secr3t")) {
-				Authentication authentication = new UsernamePasswordAuthenticationToken(
-						"Muito secreto", null, List.of(new SimpleGrantedAuthority("USER")));
+				var identificacaoUsuario = new IdentificacaoUsuario(
+						"id-secret",
+						"Muito Secreto",
+						"x-secret",
+						List.of("USER"));
+				
+				Authentication authentication = new CustomAuthentication(identificacaoUsuario);
 				
 				SecurityContext securityContext = SecurityContextHolder.getContext();
 				securityContext.setAuthentication(authentication);

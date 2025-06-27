@@ -3,11 +3,12 @@ package kleberlz.sbootexp_security.config;
 import java.util.List;
 
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+
+import kleberlz.sbootexp_security.security.CustomAuthentication;
+import kleberlz.sbootexp_security.security.IdentificacaoUsuario;
 
 @Component
 public class SenhaMasterAuthenticationaProvider implements AuthenticationProvider {
@@ -23,8 +24,13 @@ public class SenhaMasterAuthenticationaProvider implements AuthenticationProvide
 		String senhaMaster = "@321";
 		
 		if(loginMaster.equals(login) && senhaMaster.equals(senha)) {
-			return new UsernamePasswordAuthenticationToken
-					("Sou Master", null, List.of(new SimpleGrantedAuthority("ADMIN")));
+			IdentificacaoUsuario identificacaoUsuario = new IdentificacaoUsuario(
+					"Sou Master",
+					"Master",
+					loginMaster,
+					List.of("ADMIN"));
+			
+			return new CustomAuthentication(identificacaoUsuario);
 		}
 		
 		return null;
